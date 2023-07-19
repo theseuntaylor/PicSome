@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">StoreLabs Application</string>
+
+    <string name="home">Home</string>
+    <string name="home_content_description">home</string>
+    <string name="favourites">Favourites</string>
+    <string name="favourites_content_description">favourites</string>
+
+</resources>
