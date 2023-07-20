@@ -17,13 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.application.storelabs.core.BottomAppBar
-import com.application.storelabs.core.Destinations
 import com.application.storelabs.core.StoreLabAppState
+import com.application.storelabs.core.theme.StoreLabsApplicationTheme
 import com.application.storelabs.navigation.favouritesScreen
 import com.application.storelabs.navigation.homeRoute
 import com.application.storelabs.navigation.homeScreen
-import com.application.storelabs.ui.theme.StoreLabsApplicationTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -41,10 +42,9 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         bottomBar = {
                             BottomAppBar(
-                                navigateToDestinations = appState::navigateToTopDestinations,
-                                navController = navController,
                                 currentRoute = appState.currentDestination,
-                                destinations = Destinations.values().asList()
+                                destinations = appState.topLevelDestinations,
+                                navigateToDestinations = appState::navigateToTopDestinations
                             )
                         }
                     ) { padding ->

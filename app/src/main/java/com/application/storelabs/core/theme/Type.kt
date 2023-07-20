@@ -1,4 +1,4 @@
-package com.application.storelabs.ui.theme
+package com.application.storelabs.core.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

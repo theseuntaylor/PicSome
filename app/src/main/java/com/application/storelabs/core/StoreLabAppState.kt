@@ -22,6 +22,7 @@ fun NavController.navigateToFavourites(navOptions: NavOptions? = null) {
 @Stable
 class StoreLabAppState(private val navController: NavController) {
 
+    val topLevelDestinations: List<Destinations> = Destinations.values().asList()
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 

@@ -1,4 +1,4 @@
-package com.application.storelabs.ui.theme
+package com.application.storelabs.core.theme
 
 import android.app.Activity
 import android.os.Build
