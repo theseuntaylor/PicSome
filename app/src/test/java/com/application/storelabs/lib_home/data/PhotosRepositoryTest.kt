@@ -28,7 +28,7 @@ class PhotosRepositoryTest {
         // when
         val favouritePhotos = photosRepository.getFavouritePhotos()
         // then
-        favouritePhotos.collect{actualFavouritePhotos ->
+        favouritePhotos.collect { actualFavouritePhotos ->
             assert(actualFavouritePhotos == expectedFavouritePhotos)
         }
     }
@@ -38,7 +38,7 @@ class PhotosRepositoryTest {
         // given
         val localDataSource = mock<PhotosDao>().apply {
             whenever(getFavouritePhotos()).thenReturn(
-               throw Exception(ERROR_MSG)
+                throw Exception(ERROR_MSG)
             )
         }
         val photosRepository = createPhotosRepository(localDataSource = localDataSource)
@@ -49,17 +49,18 @@ class PhotosRepositoryTest {
     @Test
     fun `when favourite photos is toggled, then the database is called`() = runTest {
         // given
-        DummyData.favouritePhotos
         val localDataSource = mock<PhotosDao>().apply {
-            whenever(toggleFavourites(
-                id = any(), isFavourite = any()
-            )).thenReturn(
+            whenever(
+                toggleFavourites(
+                    id = any(), isFavourite = any()
+                )
+            ).thenReturn(
                 Unit
             )
         }
         val photosRepository = createPhotosRepository(localDataSource = localDataSource)
         // when
-        val toggleFavourite = photosRepository.toggleFavourite(
+        photosRepository.toggleFavourite(
             id = "1", isFavourite = true
         )
         // then
@@ -71,11 +72,12 @@ class PhotosRepositoryTest {
     @Test
     fun `when favourite photos is toggled, then unit is returned`() = runTest {
         // given
-        DummyData.favouritePhotos
         val localDataSource = mock<PhotosDao>().apply {
-            whenever(toggleFavourites(
-                id = any(), isFavourite = any()
-            )).thenReturn(
+            whenever(
+                toggleFavourites(
+                    id = any(), isFavourite = any()
+                )
+            ).thenReturn(
                 Unit
             )
         }
@@ -88,6 +90,53 @@ class PhotosRepositoryTest {
         assert(toggleFavourite == Unit)
     }
 
+    @Test
+    fun `when fetching photos, then we fetch from cached source first`() = runTest {
+        // given
+        val expectedPhotos = DummyData.allPhotos
+        val localDataSource = mock<PhotosDao>().apply {
+            whenever(getPhotos()).thenReturn(
+                DummyData.cachedPhotos
+            )
+        }
+        val photosRepository = createPhotosRepository(localDataSource = localDataSource)
+        // when
+        val photos = photosRepository.getPhotos()
+        // then
+        photos.collect { actualPhotos ->
+            assert(actualPhotos == expectedPhotos)
+        }
+    }
+
+    @Test
+    fun `when fetching photos and cache source is empty, then we fetch from remote source`() =
+        runTest {
+            // given
+            val expectedPhotos = DummyData.allPhotosFromRemote.sortedBy { it.id }
+            val localDataSource = mock<PhotosDao>().apply {
+                whenever(getPhotos()).thenReturn(
+                    emptyList()
+                )
+                whenever(refreshPhotos(any())).thenReturn(
+                    Unit
+                )
+            }
+            val networkDataSource = mock<PhotosNetworkDataSource>().apply {
+                whenever(getPhotos()).thenReturn(
+                    DummyData.remotePhotos
+                )
+            }
+            val photosRepository = createPhotosRepository(
+                localDataSource = localDataSource,
+                networkDataSource = networkDataSource,
+            )
+            // when
+            val photos = photosRepository.getPhotos()
+            // then
+            photos.collect { actualPhotos ->
+                assert(actualPhotos.sortedBy { it.id } == expectedPhotos)
+            }
+        }
 
 
     // endregion
@@ -97,7 +146,7 @@ class PhotosRepositoryTest {
     val ERROR_MSG = "Something went wrong!"
     private fun createPhotosRepository(
         localDataSource: PhotosDao = mock(),
-        networkDataSource: PhotosNetworkDataSource = mock()
+        networkDataSource: PhotosNetworkDataSource = mock(),
     ) = PhotosRepositoryImpl(
         localDataSource = localDataSource,
         networkDataSource = networkDataSource,
