@@ -1,17 +1,21 @@
 package com.application.storelabs.lib_home.di
 
-import com.application.storelabs.lib_home.data.PhotosRepository
-import com.application.storelabs.lib_home.data.PhotosRepositoryImpl
+import com.application.storelabs.lib_home.data.repository.PhotosRepository
+import com.application.storelabs.lib_home.data.repository.PhotosRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface HomeModule {
+abstract class HomeModule {
 
-    @get:Binds
-    val PhotosRepositoryImpl.photosRepository: PhotosRepository
+    @Binds
+    @Singleton
+    abstract fun bindPhotosRepository(
+        photosRepositoryImpl: PhotosRepositoryImpl
+    ): PhotosRepository
 
 }

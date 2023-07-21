@@ -5,5 +5,6 @@
     <string name="home_content_description">home</string>
     <string name="favourites">Favourites</string>
     <string name="favourites_content_description">favourites</string>
+    <string name="favourites_icon_content_description">Content description for toggling favourite photos.</string>
 
 </resources>

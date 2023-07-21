@@ -1,7 +1,5 @@
 package com.application.storelabs.di
 
-import com.application.storelabs.lib_home.data.PhotosRepositoryImpl
-import com.application.storelabs.lib_home.local.PhotosDao
 import com.application.storelabs.lib_home.remote.PhotosNetworkDataSource
 import com.application.storelabs.utils.BASE_URL
 import com.application.storelabs.utils.REQUEST_TIMEOUT
@@ -41,17 +39,8 @@ object AppModule {
     @Provides
     @Singleton
     fun providesCoroutineScope(
-        @Named(AppConstants.IO_DISPATCHER) dispatcher: CoroutineDispatcher
+        @Named(AppConstants.MAIN_DISPATCHER) dispatcher: CoroutineDispatcher
     ): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
-
-    @Provides
-    @Singleton
-    fun providePhotosRepository(
-        localDataSource: PhotosDao,
-        networkDataSource: PhotosNetworkDataSource,
-        dispatcher: CoroutineDispatcher,
-        scope: CoroutineScope
-    ): PhotosRepositoryImpl = PhotosRepositoryImpl(localDataSource, networkDataSource, dispatcher, scope)
 
     @Provides
     @Singleton
