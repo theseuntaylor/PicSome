@@ -53,7 +53,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Fixed(2)
                     ) {
-                        items(items = state.data.shuffled(), key = { photo: PhotoUi -> photo.id }) { photo ->
+                        items(items = state.data, key = { photo: PhotoUi -> photo.id }) { photo ->
                             PhotoItem(
                                 photo = photo,
                                 toggleFavourites = viewModel::toggleFavourite
