@@ -8,6 +8,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
+import com.application.storelabs.navigation.Destinations
 import com.application.storelabs.navigation.favouritesRoute
 import com.application.storelabs.navigation.homeRoute
 
@@ -23,6 +24,7 @@ fun NavController.navigateToFavourites(navOptions: NavOptions? = null) {
 class StoreLabAppState(private val navController: NavController) {
 
     val topLevelDestinations: List<Destinations> = Destinations.values().asList()
+
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 

@@ -2,7 +2,7 @@ package com.application.storelabs.lib_home.remote.model
 
 import com.application.storelabs.lib_home.domain.model.Photo
 
-data class PhotoDTO(
+data class PhotoDto(
     val id: String,
     val author: String,
     val width: Int,
@@ -11,7 +11,7 @@ data class PhotoDTO(
     val download_url: String,
 )
 
-fun PhotoDTO.toDomainModel() = Photo(
+fun PhotoDto.toDomainModel() = Photo(
     id = id,
     author = author,
     width = width,

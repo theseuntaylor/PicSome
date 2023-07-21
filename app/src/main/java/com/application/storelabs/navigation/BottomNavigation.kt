@@ -1,4 +1,4 @@
-package com.application.storelabs.core
+package com.application.storelabs.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -8,12 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.application.storelabs.R
-import com.application.storelabs.navigation.favouritesRoute
-import com.application.storelabs.navigation.homeRoute
 
 enum class Destinations(
     val destinationRouteName: String,
