@@ -11,5 +11,5 @@
 
 ## Screenshots
 
-![Home Screen]([https://github.com/theseuntaylor/StoreLabs-Assessment/blob/master/](https://github.com/theseuntaylor/StoreLabs-Assessment/blob/master/app/Screenshot_20230721-145540.png))
-![Favourites Screen](https://github.com/theseuntaylor/StoreLabs-Assessment/blob/master/)
+![Home Screen](https://github.com/theseuntaylor/StoreLabs-Assessment/blob/master/app/Screenshot_20230721-145540.png)
+![Favourites Screen](https://github.com/theseuntaylor/StoreLabs-Assessment/blob/master/app/Screenshot_20230721-145549.png)
