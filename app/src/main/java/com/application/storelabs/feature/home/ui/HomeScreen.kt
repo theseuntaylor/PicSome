@@ -20,7 +20,7 @@ import com.application.storelabs.core.components.Loader
 import com.application.storelabs.core.components.PhotoItem
 import com.application.storelabs.core.theme.Typography
 import com.application.storelabs.feature.home.model.HomeUiState
-import com.application.storelabs.feature.home.model.PhotoUI
+import com.application.storelabs.feature.home.model.PhotoUi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -53,7 +53,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Fixed(2)
                     ) {
-                        items(items = state.data.shuffled(), key = { photo: PhotoUI -> photo.id }) { photo ->
+                        items(items = state.data.shuffled(), key = { photo: PhotoUi -> photo.id }) { photo ->
                             PhotoItem(
                                 photo = photo,
                                 toggleFavourites = viewModel::toggleFavourite

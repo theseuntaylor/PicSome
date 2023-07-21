@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.application.storelabs.R
 import com.application.storelabs.core.theme.Typography
-import com.application.storelabs.feature.home.model.PhotoUI
+import com.application.storelabs.feature.home.model.PhotoUi
 
 @Composable
 fun PhotoItem(
     modifier: Modifier = Modifier,
-    photo: PhotoUI,
+    photo: PhotoUi,
     toggleFavourites: (id: String, isFavourite: Boolean) -> Unit
 ) {
     Card(

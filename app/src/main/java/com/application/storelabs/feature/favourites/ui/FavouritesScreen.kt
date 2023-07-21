@@ -23,7 +23,7 @@ import com.application.storelabs.core.components.Loader
 import com.application.storelabs.core.components.PhotoItem
 import com.application.storelabs.core.theme.Typography
 import com.application.storelabs.feature.favourites.FavouritesUiState
-import com.application.storelabs.feature.home.model.PhotoUI
+import com.application.storelabs.feature.home.model.PhotoUi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -78,7 +78,7 @@ fun ShowFavourites(viewModel: FavouriteViewModel = hiltViewModel()) {
                         ) {
                             items(
                                 items = state.favouritePhotos,
-                                key = { photo: PhotoUI -> photo.id }) { photo ->
+                                key = { photo: PhotoUi -> photo.id }) { photo ->
                                 PhotoItem(
                                     photo = photo,
                                     toggleFavourites = viewModel::toggleFavourite
