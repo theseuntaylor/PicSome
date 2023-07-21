@@ -1,6 +1,6 @@
 # StoreLabs-Assessment
 
-- A mobile application that fetches 100 imnages from [the Picsum's API](https://picsum.photos/).
+- A mobile application that fetches 100 images from [the Picsum's API](https://picsum.photos/).
 
 ## Tech Stack used 
 - MVVM
