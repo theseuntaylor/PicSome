@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.application.storelabs'
+    namespace 'com.theseuntaylor.picsomeapp'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.application.storelabs"
+        applicationId "com.theseuntaylor.picsomeapp"
         minSdk 24
         targetSdk 34
         versionCode 1

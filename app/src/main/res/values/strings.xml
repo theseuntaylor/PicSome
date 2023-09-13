@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StoreLabs Application</string>
+    <string name="app_name">PicSome Application</string>
 
     <string name="home">Home</string>
     <string name="home_content_description">home</string>
