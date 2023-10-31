@@ -1,4 +1,4 @@
-# StoreLabs-Assessment
+# PicSome
 
 - A mobile application that fetches 100 images from [the Picsum's API](https://picsum.photos/).
 
