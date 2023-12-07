@@ -1,5 +1,6 @@
 package com.theseuntaylor.picsomeapp.core.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,10 +29,16 @@ import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 fun PhotoItem(
     modifier: Modifier = Modifier,
     photo: PhotoUi,
-    toggleFavourites: (id: String, isFavourite: Boolean) -> Unit
+    toggleFavourites: (id: String, isFavourite: Boolean) -> Unit,
+    navigateToFullScreen: (PhotoUi) -> Unit,
 ) {
     Card(
-        modifier = modifier.padding(8.dp)
+        modifier = modifier
+            .padding(8.dp)
+            .clickable(
+                // navigate to screen that shows image in full screen
+                onClick = { navigateToFullScreen(photo) }
+            )
     ) {
         Column(
             verticalArrangement = Arrangement.Center,

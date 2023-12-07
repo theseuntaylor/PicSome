@@ -7,6 +7,7 @@ import retrofit2.http.Query
 interface PhotosNetworkDataSource {
     @GET("v2/list")
     suspend fun getPhotos(
+        @Query("page") page: Int = (1..5).random(),
         @Query("limit") limit: Int = 100
     ): List<PhotoDto>
 }

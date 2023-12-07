@@ -27,7 +27,10 @@ import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowFavourites(viewModel: FavouriteViewModel = hiltViewModel()) {
+fun ShowFavourites(
+    viewModel: FavouriteViewModel = hiltViewModel(),
+    navigateToFullScreen: (Any?) -> Unit,
+) {
 
     LaunchedEffect(Unit) {
         viewModel.getFavouritePhotos()
@@ -81,7 +84,8 @@ fun ShowFavourites(viewModel: FavouriteViewModel = hiltViewModel()) {
                                 key = { photo: PhotoUi -> photo.id }) { photo ->
                                 PhotoItem(
                                     photo = photo,
-                                    toggleFavourites = viewModel::toggleFavourite
+                                    toggleFavourites = viewModel::toggleFavourite,
+                                    navigateToFullScreen = { navigateToFullScreen(photo.download_url) }
                                 )
                             }
                         }

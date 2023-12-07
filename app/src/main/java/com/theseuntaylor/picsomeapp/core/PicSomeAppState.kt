@@ -9,24 +9,27 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import com.theseuntaylor.picsomeapp.navigation.Destinations
-import com.theseuntaylor.picsomeapp.navigation.favouritesRoute
-import com.theseuntaylor.picsomeapp.navigation.homeRoute
+import com.theseuntaylor.picsomeapp.navigation.Screen
 
 fun NavController.navigateToHome(navOptions: NavOptions? = null) {
-    this.navigate(homeRoute, navOptions)
+    this.navigate(Screen.Home.route, navOptions)
 }
 
 fun NavController.navigateToFavourites(navOptions: NavOptions? = null) {
-    this.navigate(favouritesRoute, navOptions)
+    this.navigate(Screen.Favourites.route, navOptions)
 }
 
 @Stable
 class PicSomeAppState(private val navController: NavController) {
-
     val topLevelDestinations: List<Destinations> = Destinations.values().asList()
 
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
+
+    val shouldShowBottomBar: Boolean
+        @Composable get() = currentDestination?.route in Destinations.values().asList().map {
+            it.destinationRouteName
+        }
 
     fun navigateToTopDestinations(destination: Destinations) {
         val topLevelNavOptions = navOptions {

@@ -1,6 +1,5 @@
 package com.theseuntaylor.picsomeapp.feature.home.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,18 +16,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.theseuntaylor.picsomeapp.core.ShowErrorSnackBar
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.core.components.PhotoItem
-import com.theseuntaylor.picsomeapp.core.ShowErrorSnackBar
 import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.home.model.HomeUiState
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     snackBarHostState: SnackbarHostState,
+    onPictureClick: (PhotoUi) -> Unit,
 ) {
 
     val uiState = viewModel.uiState
@@ -59,7 +58,9 @@ fun HomeScreen(
                     ) {
                         items(items = state.data, key = { photo: PhotoUi -> photo.id }) { photo ->
                             PhotoItem(
-                                photo = photo, toggleFavourites = viewModel::toggleFavourite
+                                photo = photo,
+                                toggleFavourites = viewModel::toggleFavourite,
+                                navigateToFullScreen = { onPictureClick(photo) }
                             )
                         }
                     }

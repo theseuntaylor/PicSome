@@ -19,13 +19,13 @@ enum class Destinations(
     @StringRes val contentDescription: Int
 ) {
     HOME(
-        homeRoute,
+        Screen.Home.route,
         R.string.home,
         R.drawable.ic_home_24,
         R.string.home_content_description
     ),
     FAVOURITES(
-        favouritesRoute,
+        Screen.Favourites.route,
         R.string.favourites,
         R.drawable.ic_favorite_24,
         R.string.favourites_content_description

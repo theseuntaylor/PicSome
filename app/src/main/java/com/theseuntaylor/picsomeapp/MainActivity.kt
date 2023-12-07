@@ -16,12 +16,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.theseuntaylor.picsomeapp.core.PicSomeAppState
 import com.theseuntaylor.picsomeapp.core.theme.PickSomeApplicationTheme
 import com.theseuntaylor.picsomeapp.navigation.BottomAppBar
+import com.theseuntaylor.picsomeapp.navigation.Screen
 import com.theseuntaylor.picsomeapp.navigation.favouritesScreen
-import com.theseuntaylor.picsomeapp.navigation.homeRoute
+import com.theseuntaylor.picsomeapp.navigation.fullScreen
 import com.theseuntaylor.picsomeapp.navigation.homeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,11 +44,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         bottomBar = {
-                            BottomAppBar(
-                                currentRoute = appState.currentDestination,
-                                destinations = appState.topLevelDestinations,
-                                navigateToDestinations = appState::navigateToTopDestinations
-                            )
+                            if (appState.shouldShowBottomBar){
+                                BottomAppBar(
+                                    currentRoute = appState.currentDestination,
+                                    destinations = appState.topLevelDestinations,
+                                    navigateToDestinations = appState::navigateToTopDestinations
+                                )
+                            }
                         },
                         snackbarHost = {
                             SnackbarHost(hostState = snackbarHostState)
@@ -60,17 +64,27 @@ class MainActivity : ComponentActivity() {
                             Column(Modifier.fillMaxSize()) {
                                 NavHost(
                                     navController = navController,
-                                    startDestination = homeRoute,
+                                    startDestination = Screen.Home.route,
                                     modifier = Modifier
                                 ) {
-                                    homeScreen(snackBarHostState = snackbarHostState)
-                                    favouritesScreen()
+                                    homeScreen(
+                                        snackBarHostState = snackbarHostState,
+                                        navController = navController
+                                    )
+                                    favouritesScreen(navController = navController)
+                                    navigation(
+                                        route = "fullScreenRoute",
+                                        startDestination = Screen.FullImage.route
+                                    ) {
+                                        fullScreen(snackBarHostState = snackbarHostState)
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
         }
     }
 }

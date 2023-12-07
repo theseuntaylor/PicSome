@@ -19,7 +19,7 @@ import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 
 @Composable
-fun FavouriteItem(
+fun  FavouriteItem(
     modifier: Modifier = Modifier,
     photo: PhotoUi,
     toggleFavourites: (id: String, isFavourite: Boolean) -> Unit
