@@ -3,6 +3,8 @@ package com.theseuntaylor.picsomeapp.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +40,10 @@ fun BottomAppBar(
     currentRoute: NavDestination?,
     destinations: List<Destinations>
 ) {
-    androidx.compose.material3.NavigationBar {
+
+    NavigationBar(
+        contentColor = colorScheme.surface,
+    ) {
         destinations.forEach { destination ->
 
             val selected = currentRoute.isTopLevelDestinationInHierarchy(destination)

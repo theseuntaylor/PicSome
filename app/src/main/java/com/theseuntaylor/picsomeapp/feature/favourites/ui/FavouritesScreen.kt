@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,7 +57,8 @@ fun ShowFavourites(viewModel: FavouriteViewModel = hiltViewModel()) {
                             .padding(5.dp),
                         style = Typography.bodyLarge.copy(
                             fontWeight = FontWeight.W700,
-                            fontSize = 24.sp
+                            fontSize = 24.sp,
+                            color = colorScheme.primary
                         ),
                         textAlign = TextAlign.Center
                     )
@@ -68,7 +70,8 @@ fun ShowFavourites(viewModel: FavouriteViewModel = hiltViewModel()) {
                                 .padding(5.dp),
                             style = Typography.bodyLarge.copy(
                                 fontWeight = FontWeight.W400,
-                                fontSize = 18.sp
+                                fontSize = 18.sp,
+                                color = colorScheme.primary
                             ),
                             textAlign = TextAlign.Center
                         )

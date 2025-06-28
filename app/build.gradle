@@ -32,6 +32,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -124,6 +125,7 @@ dependencies    {
 
     // Kotlin
     implementation("androidx.activity:activity-ktx:$activity_version")
+
 }
 
 kapt {

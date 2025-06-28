@@ -9,9 +9,15 @@ import com.theseuntaylor.picsomeapp.feature.home.ui.HomeScreen
 const val homeRoute = "home_route"
 const val favouritesRoute = "favourites_route"
 
-fun NavGraphBuilder.homeScreen(snackBarHostState: SnackbarHostState) {
+fun NavGraphBuilder.homeScreen(
+    snackBarHostState: SnackbarHostState,
+    onScrollDirectionChanged: (Boolean) -> Unit
+) {
     composable(route = homeRoute) {
-        HomeScreen(snackBarHostState = snackBarHostState)
+        HomeScreen(
+            snackBarHostState = snackBarHostState,
+            onScrollDirectionChanged = onScrollDirectionChanged
+        )
     }
 }
 
