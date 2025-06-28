@@ -37,6 +37,47 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+val DarkColorScheme: ColorScheme = darkColorScheme(
+    primary = Color(0xFFFAD9EB),
+    onPrimary = Color(0xFF3C0A33),
+    primaryContainer = Color(0xFFD35DA3),
+    onPrimaryContainer = Color(0xFFFFFFFF),
+
+    secondary = Color(0xFFF2CFE6),
+    onSecondary = Color(0xFF320A26),
+    secondaryContainer = Color(0xFFA64D8F),
+    onSecondaryContainer = Color(0xFFFFFFFF),
+
+    tertiary = Color(0xFFEBD7F7),
+    onTertiary = Color(0xFF310A3C),
+    tertiaryContainer = Color(0xFF885D9E),
+    onTertiaryContainer = Color(0xFFFFFFFF),
+
+    background = Color(0xFF1C1B1F),
+    onBackground = Color(0xFFFFFFFF),
+    surface = Color(0xFF1C1B1F),
+    onSurface = Color(0xFFFFFFFF),
+
+    error = Color(0xFFF9DEDC),
+    onError = Color(0xFF410E0B),
+    errorContainer = Color(0xFFB3261E),
+    onErrorContainer = Color(0xFFFFFFFF)
+)
+
+
+@Composable
+fun ProvideWindowInsetsController(
+) {
+    val isLightTheme = colorScheme.background.luminance() > 0.5
+    val activity = LocalActivity.current as Activity
+    SideEffect {
+        val window = activity.window
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.isAppearanceLightStatusBars = isLightTheme
+        controller.isAppearanceLightNavigationBars = isLightTheme
+    }
+}
+
 @Composable
 fun PickSomeApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
