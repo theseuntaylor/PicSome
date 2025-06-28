@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +57,7 @@ fun PhotoItem(
                         Icon(
                             painter = if (photo.isFavourite) painterResource(id = R.drawable.ic_favorite_24)
                             else painterResource(id = R.drawable.ic_favorite_border_24),
-                            tint = if (photo.isFavourite) Color.Red else Color.Gray,
+                            tint = if (photo.isFavourite) colorScheme.primary else Color.Gray,
                             contentDescription = stringResource(id = R.string.favourites_icon_content_description)
                         )
                     }
