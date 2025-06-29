@@ -21,13 +21,13 @@ fun NavController.navigateToFavourites(navOptions: NavOptions? = null) {
 
 @Stable
 class PicSomeAppState(private val navController: NavController) {
-    val topLevelDestinations: List<Destinations> = Destinations.values().asList()
+    val topLevelDestinations: List<Destinations> = Destinations.entries
 
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
     val shouldShowBottomBar: Boolean
-        @Composable get() = currentDestination?.route in Destinations.values().asList().map {
+        @Composable get() = currentDestination?.route in topLevelDestinations.map {
             it.destinationRouteName
         }
 

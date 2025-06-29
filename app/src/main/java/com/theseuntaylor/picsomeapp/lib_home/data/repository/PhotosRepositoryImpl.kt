@@ -25,16 +25,11 @@ class PhotosRepositoryImpl @Inject constructor(
             if (cachedPhotos.isNotEmpty()) {
                 emit(cachedPhotos)
             } else {
-//                if (networkDataSource.getPhotos().isSuccessful) {
                 val remotePhotos =
                     networkDataSource.getPhotos().map { it.toDomainModel() }.shuffled()
-                remotePhotos?.map { it.asEntity() }
-                    ?.let { localDataSource.refreshPhotos(photoEntity = it) }
-                if (remotePhotos != null) {
-                    emit(value = remotePhotos)
-                }
-
-//                }
+                remotePhotos.map { it.asEntity() }
+                    .let { localDataSource.refreshPhotos(photoEntity = it) }
+                emit(value = remotePhotos)
             }
         } catch (e: Exception) {
             e.localizedMessage

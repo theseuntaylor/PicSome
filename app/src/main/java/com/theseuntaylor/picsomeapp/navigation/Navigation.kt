@@ -16,8 +16,8 @@ fun NavGraphBuilder.homeScreen(snackBarHostState: SnackbarHostState, navControll
             snackBarHostState = snackBarHostState,
             onPictureClick = {
                 navController.navigate(
-                    Screen.FullImage.createRoute(
-                        pictureId = it.id
+                    Screen.FullScreenImage.createRoute(
+                        pictureId = it
                     )
                 )
             }
@@ -30,18 +30,16 @@ fun NavGraphBuilder.favouritesScreen(navController: NavController) {
         route = Screen.Favourites.route,
     ) {
         ShowFavourites {
-            navController.navigate(Screen.FullImage.route)
+            navController.navigate(Screen.FullScreenImage.route)
         }
     }
 }
 
 fun NavGraphBuilder.fullScreen(snackBarHostState: SnackbarHostState) {
     composable(
-        route = Screen.FullImage.route,
-        arguments = Screen.FullImage.navArguments
+         route = Screen.FullScreenImage.route,
+        arguments = Screen.FullScreenImage.navArguments
     ) {
-        FullImageScreen(
-            snackBarHostState = snackBarHostState,
-        )
+        FullImageScreen(snackBarHostState = snackBarHostState)
     }
 }

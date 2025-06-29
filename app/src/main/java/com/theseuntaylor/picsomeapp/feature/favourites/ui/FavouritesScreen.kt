@@ -41,7 +41,6 @@ fun ShowFavourites(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         when (val state = uiState.value) {
             is FavouritesUiState.Loading -> {
                 Loader()

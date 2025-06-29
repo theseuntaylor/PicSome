@@ -27,7 +27,7 @@ import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     snackBarHostState: SnackbarHostState,
-    onPictureClick: (PhotoUi) -> Unit,
+    onPictureClick: (String) -> Unit,
 ) {
 
     val uiState = viewModel.uiState
@@ -35,34 +35,31 @@ fun HomeScreen(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            "Your Photo Library",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp),
+            style = Typography.bodyLarge.copy(
+                fontWeight = FontWeight.W700, fontSize = 24.sp
+            ),
+            textAlign = TextAlign.Center
+        )
         when (val state = uiState.value) {
             is HomeUiState.Loading -> {
                 Loader()
             }
 
             is HomeUiState.Success -> {
-                state.data.filter { it.isFavourite }
-                Column {
-                    Text(
-                        "Your Photo Library",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(5.dp),
-                        style = Typography.bodyLarge.copy(
-                            fontWeight = FontWeight.W700, fontSize = 24.sp
-                        ),
-                        textAlign = TextAlign.Center
-                    )
-                    LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Fixed(2)
-                    ) {
-                        items(items = state.data, key = { photo: PhotoUi -> photo.id }) { photo ->
-                            PhotoItem(
-                                photo = photo,
-                                toggleFavourites = viewModel::toggleFavourite,
-                                navigateToFullScreen = { onPictureClick(photo) }
-                            )
-                        }
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Fixed(2)
+                ) {
+                    items(items = state.data, key = { photo: PhotoUi -> photo.id }) { photo ->
+                        PhotoItem(
+                            photo = photo,
+                            toggleFavourites = viewModel::toggleFavourite,
+                            navigateToFullScreen = { onPictureClick(photo.id) }
+                        )
                     }
                 }
             }

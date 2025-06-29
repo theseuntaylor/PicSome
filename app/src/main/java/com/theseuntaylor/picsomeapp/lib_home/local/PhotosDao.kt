@@ -15,6 +15,9 @@ interface PhotosDao {
     @Query("SELECT * FROM photos")
     suspend fun getPhotos(): List<PhotoEntity>
 
+    @Query("SELECT * FROM photos WHERE id = :id")
+    suspend fun getPhoto(id: String): PhotoEntity
+
     @Query("UPDATE photos SET isFavourite=:isFavourite WHERE id = :id")
     suspend fun toggleFavourites(id: String, isFavourite: Boolean)
 
@@ -25,7 +28,7 @@ interface PhotosDao {
     suspend fun deleteUnfavourite(isFavourite: Boolean = false)
 
     @Transaction
-    suspend fun refreshPhotos(photoEntity: List<PhotoEntity>){
+    suspend fun refreshPhotos(photoEntity: List<PhotoEntity>) {
         deleteUnfavourite()
         addPhotos(photoEntity = photoEntity)
     }

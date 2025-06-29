@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                     favouritesScreen(navController = navController)
                                     navigation(
                                         route = "fullScreenRoute",
-                                        startDestination = Screen.FullImage.route
+                                        startDestination = Screen.FullScreenImage.route
                                     ) {
                                         fullScreen(snackBarHostState = snackbarHostState)
                                     }
