@@ -40,7 +40,8 @@ import kotlinx.coroutines.flow.map
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     snackBarHostState: SnackbarHostState,
-    onScrollDirectionChanged: (Boolean) -> Unit
+    onScrollDirectionChanged: (Boolean) -> Unit,
+    onPhotoClicked: (String) -> Unit
 ) {
 
     val listState = rememberLazyStaggeredGridState()
@@ -76,7 +77,9 @@ fun HomeScreen(
                     ) {
                         items(items = state.data, key = { photo: PhotoUi -> photo.id }) { photo ->
                             PhotoItem(
-                                photo = photo, toggleFavourites = viewModel::toggleFavourite
+                                photo = photo,
+                                toggleFavourites = viewModel::toggleFavourite,
+                                onPhotoClicked = onPhotoClicked
                             )
                         }
                     }

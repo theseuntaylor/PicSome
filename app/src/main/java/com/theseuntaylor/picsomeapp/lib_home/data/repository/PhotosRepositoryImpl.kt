@@ -42,6 +42,15 @@ class PhotosRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPhotoById(id: String): Flow<Photo> = flow {
+        try {
+            val photo = localDataSource.getPhotoById(id).toDomainModel()
+            emit(photo)
+        } catch (e: Exception) {
+            throw e.transformException()
+        }
+    }
+
     override suspend fun toggleFavourite(id: String, isFavourite: Boolean) {
         localDataSource.toggleFavourites(id = id, isFavourite = isFavourite)
     }

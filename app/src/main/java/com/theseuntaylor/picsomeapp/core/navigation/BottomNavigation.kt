@@ -1,4 +1,4 @@
-package com.theseuntaylor.picsomeapp.navigation
+package com.theseuntaylor.picsomeapp.core.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

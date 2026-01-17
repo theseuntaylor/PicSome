@@ -15,21 +15,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.theseuntaylor.picsomeapp.core.PicSomeAppState
+import com.theseuntaylor.picsomeapp.core.navigation.BottomAppBar
+import com.theseuntaylor.picsomeapp.core.navigation.PicsomeNavHost
+import com.theseuntaylor.picsomeapp.core.rememberPicSomeAppState
 import com.theseuntaylor.picsomeapp.core.theme.PickSomeApplicationTheme
 import com.theseuntaylor.picsomeapp.core.theme.ProvideWindowInsetsController
-import com.theseuntaylor.picsomeapp.navigation.BottomAppBar
-import com.theseuntaylor.picsomeapp.navigation.favouritesScreen
-import com.theseuntaylor.picsomeapp.navigation.homeRoute
-import com.theseuntaylor.picsomeapp.navigation.homeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,9 +39,7 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }
-                val appState = PicSomeAppState(navController)
-
-                var bottomBarVisible by remember { mutableStateOf(true) }
+                val appState = rememberPicSomeAppState(navController)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = Color.Transparent,
@@ -55,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         bottomBar = {
                             AnimatedVisibility(
-                                visible = bottomBarVisible,
+                                visible = appState.shouldShowBottomBar,
                                 enter = slideInVertically(initialOffsetY = { it }),
                                 exit = slideOutVertically(targetOffsetY = { it })
                             ) {
@@ -76,19 +68,11 @@ class MainActivity : ComponentActivity() {
                                 .padding(padding)
                         ) {
                             Column(Modifier.fillMaxSize()) {
-                                NavHost(
+                                PicsomeNavHost(
                                     navController = navController,
-                                    startDestination = homeRoute,
-                                    modifier = Modifier
-                                ) {
-                                    homeScreen(
-                                        snackBarHostState = snackbarHostState,
-                                        onScrollDirectionChanged = { isVisible ->
-                                            bottomBarVisible = isVisible
-                                        }
-                                    )
-                                    favouritesScreen()
-                                }
+                                    appState = appState,
+                                    snackbarHostState = snackbarHostState,
+                                )
                             }
                         }
                     }

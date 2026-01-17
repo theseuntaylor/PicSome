@@ -47,6 +47,4 @@ class FavouriteViewModel @Inject constructor(
                 }
         }
     }
-
-    
 }

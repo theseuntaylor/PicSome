@@ -15,6 +15,9 @@ interface PhotosDao {
     @Query("SELECT * FROM photos")
     suspend fun getPhotos(): List<PhotoEntity>
 
+    @Query("SELECT * FROM photos WHERE id = :id")
+    suspend fun getPhotoById(id: String): PhotoEntity
+
     @Query("UPDATE photos SET isFavourite=:isFavourite WHERE id = :id")
     suspend fun toggleFavourites(id: String, isFavourite: Boolean)
 

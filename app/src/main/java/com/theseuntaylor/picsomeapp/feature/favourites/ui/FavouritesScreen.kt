@@ -28,7 +28,10 @@ import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowFavourites(viewModel: FavouriteViewModel = hiltViewModel()) {
+fun ShowFavourites(
+    viewModel: FavouriteViewModel = hiltViewModel(),
+    onPhotoClicked: (String) -> Unit
+) {
 
     LaunchedEffect(Unit) {
         viewModel.getFavouritePhotos()
@@ -84,7 +87,10 @@ fun ShowFavourites(viewModel: FavouriteViewModel = hiltViewModel()) {
                                 key = { photo: PhotoUi -> photo.id }) { photo ->
                                 PhotoItem(
                                     photo = photo,
-                                    toggleFavourites = viewModel::toggleFavourite
+                                    toggleFavourites = viewModel::toggleFavourite,
+                                    onPhotoClicked = { photoId ->
+                                        onPhotoClicked(photoId)
+                                    }
                                 )
                             }
                         }
