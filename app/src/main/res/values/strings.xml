@@ -8,6 +8,13 @@
     <string name="add_to_favourites">Add to favourites</string>
     <string name="remove_from_favourites">Remove from favourites</string>
     <string name="retry">Retry</string>
+    <string name="photo_details">Photo Details</string>
+    <string name="back">Back</string>
+    <string name="download">Download</string>
+    <string name="download_started">Downloading photo… check your notifications.</string>
+    <string name="download_failed">Couldn\'t start the download. Please try again.</string>
+    <string name="download_needs_storage_permission">Storage permission is needed to save photos.</string>
+    <string name="download_title">Photo by %1$s</string>
     <string name="favourites_title">Your Favourite Photos</string>
     <string name="favourites_empty">No favourites yet.\nTap ♡ on a photo to save it here.</string>
 
