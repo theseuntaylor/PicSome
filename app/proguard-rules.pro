@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Gson maps the Picsum JSON onto these by field name via reflection.
+-keep class com.theseuntaylor.picsomeapp.lib_home.remote.model.** { *; }
