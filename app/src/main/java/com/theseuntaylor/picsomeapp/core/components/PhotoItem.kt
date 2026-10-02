@@ -57,7 +57,10 @@ fun PhotoItem(
                             painter = if (photo.isFavourite) painterResource(id = R.drawable.ic_favorite_24)
                             else painterResource(id = R.drawable.ic_favorite_border_24),
                             tint = if (photo.isFavourite) colorScheme.primary else Color.Gray,
-                            contentDescription = stringResource(id = R.string.favourites_icon_content_description)
+                            contentDescription = stringResource(
+                                id = if (photo.isFavourite) R.string.remove_from_favourites
+                                else R.string.add_to_favourites
+                            )
                         )
                     }
                 }

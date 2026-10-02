@@ -5,6 +5,9 @@
     <string name="home_content_description">home</string>
     <string name="favourites">Favourites</string>
     <string name="favourites_content_description">favourites</string>
-    <string name="favourites_icon_content_description">Content description for toggling favourite photos.</string>
+    <string name="add_to_favourites">Add to favourites</string>
+    <string name="remove_from_favourites">Remove from favourites</string>
+    <string name="favourites_title">Your Favourite Photos</string>
+    <string name="favourites_empty">No favourites yet.\nTap ♡ on a photo to save it here.</string>
 
 </resources>

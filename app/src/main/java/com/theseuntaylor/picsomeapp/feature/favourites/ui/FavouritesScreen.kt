@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.core.components.PhotoItem
 import com.theseuntaylor.picsomeapp.core.theme.Typography
@@ -54,7 +56,7 @@ fun ShowFavourites(
 
                 Column {
                     Text(
-                        "Your Favourite Photos",
+                        stringResource(R.string.favourites_title),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(5.dp),
@@ -67,7 +69,7 @@ fun ShowFavourites(
                     )
                     if (favouritePhotos.isEmpty()) {
                         Text(
-                            "Your Favourite Photos",
+                            stringResource(R.string.favourites_empty),
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(5.dp),
