@@ -2,7 +2,10 @@ package com.theseuntaylor.picsomeapp.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,11 +37,19 @@ class PicSomeAppState(val navController: NavController) {
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
+    private var isBottomBarScrolledAway by mutableStateOf(false)
+
     val shouldShowBottomBar: Boolean
         @Composable
-        get() = topLevelDestinations.any { it.destinationRouteName == currentDestination?.route }
+        get() = !isBottomBarScrolledAway &&
+                topLevelDestinations.any { it.destinationRouteName == currentDestination?.route }
+
+    fun onScrollDirectionChanged(isBottomBarVisible: Boolean) {
+        isBottomBarScrolledAway = !isBottomBarVisible
+    }
 
     fun navigateToTopDestinations(destination: Destinations) {
+        isBottomBarScrolledAway = false
         val topLevelNavOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
             launchSingleTop = true

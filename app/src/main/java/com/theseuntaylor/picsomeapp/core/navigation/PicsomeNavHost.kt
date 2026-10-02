@@ -17,7 +17,7 @@ fun PicsomeNavHost(
         modifier = Modifier
     ) {
         homeScreen(
-            onScrollDirectionChanged = {},
+            onScrollDirectionChanged = appState::onScrollDirectionChanged,
             onPhotoClicked = { photoId ->
                 navController.navigate("photo_details/$photoId")
             }

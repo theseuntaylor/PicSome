@@ -3,7 +3,6 @@ package com.theseuntaylor.picsomeapp.feature.home.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -12,10 +11,6 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,8 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
 import com.theseuntaylor.picsomeapp.core.components.ErrorView
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.core.components.PhotoItem
@@ -33,7 +26,7 @@ import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.home.model.HomeUiState
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @Composable
 fun HomeScreen(
@@ -45,8 +38,6 @@ fun HomeScreen(
     val listState = rememberLazyStaggeredGridState()
     val uiState = viewModel.uiState
 
-    var previousScrollOffset by remember { mutableStateOf(0) }
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -56,7 +47,6 @@ fun HomeScreen(
             }
 
             is HomeUiState.Success -> {
-                state.data.filter { it.isFavourite }
                 Column {
                     Text(
                         "Your Photo Library",
@@ -93,11 +83,17 @@ fun HomeScreen(
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset }
-            .map { currentOffset ->
-                val scrollingUp = currentOffset < previousScrollOffset
-                previousScrollOffset = currentOffset
-                scrollingUp || currentOffset == 0
+        // Show the bar whenever Home is (re)entered, then follow the scroll direction.
+        onScrollDirectionChanged(true)
+        var previous = listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+        snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
+            .mapNotNull { current ->
+                if (current == previous) return@mapNotNull null
+                val (index, offset) = current
+                val scrollingUp = index < previous.first ||
+                        (index == previous.first && offset < previous.second)
+                previous = current
+                scrollingUp || (index == 0 && offset == 0)
             }
             .distinctUntilChanged()
             .collect { isVisible ->
