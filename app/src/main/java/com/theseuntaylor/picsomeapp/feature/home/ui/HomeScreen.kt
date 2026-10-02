@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
-import com.theseuntaylor.picsomeapp.core.ShowErrorSnackBar
+import com.theseuntaylor.picsomeapp.core.components.ErrorView
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.core.components.PhotoItem
 import com.theseuntaylor.picsomeapp.core.theme.Typography
@@ -39,7 +38,6 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    snackBarHostState: SnackbarHostState,
     onScrollDirectionChanged: (Boolean) -> Unit,
     onPhotoClicked: (String) -> Unit
 ) {
@@ -87,9 +85,7 @@ fun HomeScreen(
             }
 
             is HomeUiState.Error -> {
-                ShowErrorSnackBar(
-                    message = state.errorMessage, snackbarHostState = snackBarHostState
-                )
+                ErrorView(message = state.errorMessage, onRetry = { viewModel.getPhotos() })
             }
 
             else -> {}

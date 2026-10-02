@@ -1,6 +1,5 @@
 package com.theseuntaylor.picsomeapp.core.navigation
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -13,13 +12,11 @@ const val detailsRoute = "photo_details/{photoId}"
 const val favouritesRoute = "favourites_route"
 
 fun NavGraphBuilder.homeScreen(
-    snackBarHostState: SnackbarHostState,
     onScrollDirectionChanged: (Boolean) -> Unit,
     onPhotoClicked: (String) -> Unit
 ) {
     composable(route = homeRoute) {
         HomeScreen(
-            snackBarHostState = snackBarHostState,
             onScrollDirectionChanged = onScrollDirectionChanged,
             onPhotoClicked = { photoId -> onPhotoClicked(photoId) })
     }

@@ -12,10 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
@@ -38,7 +35,6 @@ class MainActivity : ComponentActivity() {
                 ProvideWindowInsetsController()
 
                 val navController = rememberNavController()
-                val snackbarHostState = remember { SnackbarHostState() }
                 val appState = rememberPicSomeAppState(navController)
 
                 Surface(
@@ -58,9 +54,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         },
-                        snackbarHost = {
-                            SnackbarHost(hostState = snackbarHostState)
-                        },
                     ) { padding ->
                         Row(
                             Modifier
@@ -71,7 +64,6 @@ class MainActivity : ComponentActivity() {
                                 PicsomeNavHost(
                                     navController = navController,
                                     appState = appState,
-                                    snackbarHostState = snackbarHostState,
                                 )
                             }
                         }
