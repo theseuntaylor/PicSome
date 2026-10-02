@@ -18,6 +18,8 @@ android {
         versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // Each E2E test starts from a fresh install state; screenshots go to test storage.
+        testInstrumentationRunnerArguments clearPackageData: 'true', useTestStorageService: 'true'
         vectorDrawables {
             useSupportLibrary true
         }
@@ -31,17 +33,20 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     buildFeatures {
         compose true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '2.0.21'
+    }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
     packagingOptions {
         resources {
@@ -94,4 +99,17 @@ dependencies {
     kspTest libs.hilt.compiler
     implementation libs.androidx.hilt.work
     ksp libs.androidx.hilt.compiler
+
+    testImplementation libs.junit
+    testImplementation libs.junitparams
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.mockito.kotlin
+    testImplementation libs.turbine
+
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.services.storage
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
+    androidTestUtil libs.androidx.test.orchestrator
+    androidTestUtil libs.androidx.test.services
 }

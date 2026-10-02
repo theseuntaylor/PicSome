@@ -13,7 +13,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.lang.RuntimeException
 import javax.net.ssl.SSLException
 
 class PhotosRepositoryTest {
@@ -42,24 +41,21 @@ class PhotosRepositoryTest {
     fun `when favourite photos failed, then we get the error message`() = runTest {
         // given
         val localDataSource = mock<PhotosDao>().apply {
-            whenever(getFavouritePhotos()).thenReturn(
-                throw Exception(ERROR_MSG)
-            )
+            whenever(getFavouritePhotos()).thenAnswer { throw Exception(ERROR_MSG) }
         }
         val photosRepository = createPhotosRepository(localDataSource = localDataSource)
         // when
-        val favouritePhotos = photosRepository.getFavouritePhotos()
+        photosRepository.getFavouritePhotos().collect {}
     }
 
-    @Test(expected = Throwable::class)
+    @Test
     fun `when getting photos from remote fails, then we get unknown error message`() = runTest {
         // given
         val networkDataSource = mock<PhotosNetworkDataSource>().apply {
-            whenever(getPhotos()).thenAnswer(
-                throw Throwable(ERROR_MSG)
-            )
+            whenever(getPhotos()).thenAnswer { throw Throwable(ERROR_MSG) }
         }
         val photosRepository = createPhotosRepository(
+            localDataSource = emptyCache(),
             networkDataSource = networkDataSource
         )
         // when
@@ -70,15 +66,14 @@ class PhotosRepositoryTest {
         }
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test
     fun `when getting photos from remote fails, then we get known error message`() = runTest {
         // given
         val networkDataSource = mock<PhotosNetworkDataSource>().apply {
-            whenever(getPhotos()).thenThrow (
-                SSLException(EXPECTED_ERROR_MSG)
-            )
+            whenever(getPhotos()).thenAnswer { throw SSLException("handshake failed") }
         }
         val photosRepository = createPhotosRepository(
+            localDataSource = emptyCache(),
             networkDataSource = networkDataSource
         )
         // when
@@ -190,6 +185,10 @@ class PhotosRepositoryTest {
     // region private helpers
     val ERROR_MSG = "Something went wrong!"
     val EXPECTED_ERROR_MSG = "There seems to be no network connection"
+
+    private suspend fun emptyCache() = mock<PhotosDao>().apply {
+        whenever(getPhotos()).thenReturn(emptyList())
+    }
 
     private fun createPhotosRepository(
         localDataSource: PhotosDao = mock(),
