@@ -134,12 +134,16 @@ object DummyData {
         PhotoUi(
             id = "102",
             author = "Ben Moore",
+            width = 4320,
+            height = 3240,
             download_url = "https://picsum.photos/id/102/4320/3240",
             isFavourite = true
         ),
         PhotoUi(
             id = "103",
             author = "Ben Moore",
+            width = 4320,
+            height = 3240,
             download_url = "https://picsum.photos/id/102/4320/3240",
             isFavourite = true
         ),

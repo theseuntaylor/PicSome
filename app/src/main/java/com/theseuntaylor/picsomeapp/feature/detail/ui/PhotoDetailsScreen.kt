@@ -5,12 +5,16 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -21,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,6 +35,8 @@ import coil.compose.AsyncImage
 import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.feature.detail.model.PhotoDetailsUiState
+import com.theseuntaylor.picsomeapp.feature.home.model.aspectRatio
+import com.theseuntaylor.picsomeapp.feature.home.model.sizedUrl
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,10 +113,14 @@ fun PhotoDetailsScreen(
                 }
 
                 is PhotoDetailsUiState.Success -> {
-                    Column(modifier = Modifier.fillMaxSize()) {
+                    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                         AsyncImage(
-                            model = uiState.photo.download_url,
-                            contentDescription = "Photo by ${uiState.photo.author}"
+                            model = uiState.photo.sizedUrl(targetWidthPx = constraints.maxWidth),
+                            contentDescription = "Photo by ${uiState.photo.author}",
+                            placeholder = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(uiState.photo.aspectRatio)
                         )
                     }
                 }

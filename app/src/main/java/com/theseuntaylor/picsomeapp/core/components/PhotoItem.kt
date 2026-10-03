@@ -2,9 +2,10 @@ package com.theseuntaylor.picsomeapp.core.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -16,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +28,8 @@ import coil.compose.AsyncImage
 import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
+import com.theseuntaylor.picsomeapp.feature.home.model.aspectRatio
+import com.theseuntaylor.picsomeapp.feature.home.model.sizedUrl
 
 @Composable
 fun PhotoItem(
@@ -40,12 +45,15 @@ fun PhotoItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box {
+            BoxWithConstraints {
                 AsyncImage(
-                    model = photo.download_url,
+                    model = photo.sizedUrl(targetWidthPx = constraints.maxWidth),
                     contentDescription = "Cover image for ${photo.id}",
-                    onLoading = {},
-                    placeholder = painterResource(id = R.drawable.ic_image_24)
+                    placeholder = ColorPainter(colorScheme.surfaceVariant),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(photo.aspectRatio)
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End

@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.TrafficStats
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteractionCollection
@@ -27,6 +28,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.services.storage.TestStorage
 import com.theseuntaylor.picsomeapp.MainActivity
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -139,6 +141,37 @@ class PicSomeE2ETest {
         copyDownloadToTestStorage(downloadId, "downloaded_picsome_$photoId.jpg")
     }
 
+    @Test
+    fun homeGrid_reservesImageSpaceUpfront_andFirstScreenStaysWithinDataBudget() {
+        val uid = context.applicationInfo.uid
+        val receivedBefore = TrafficStats.getUidRxBytes(uid)
+        launchAndWaitForPhotos()
+
+        // Right after the grid appears, before images arrive, each card should already be
+        // sized from the photo's dimensions rather than collapsed around the 24dp placeholder.
+        val firstImageHeightDp = compose
+            .onAllNodesWithContentDescription("Cover image for", substring = true)
+            .onFirst()
+            .fetchSemanticsNode()
+            .boundsInRoot.height / context.resources.displayMetrics.density
+        screenshot("grid_before_images_arrive")
+
+        val bytesUsed = waitForNetworkToSettle(uid) - receivedBefore
+        screenshot("grid_settled")
+        writeMetrics(
+            "first_image_height_dp=$firstImageHeightDp",
+            "home_first_screen_bytes=$bytesUsed",
+            "home_first_screen_kb=${bytesUsed / 1024}",
+        )
+
+        assertTrue("First image slot was ${firstImageHeightDp}dp tall", firstImageHeightDp >= 100f)
+        assertTrue("Only ${bytesUsed / 1024} KB downloaded; images never loaded?", bytesUsed > MIN_EXPECTED_BYTES)
+        assertTrue(
+            "Home's first screen downloaded ${bytesUsed / 1024} KB (budget ${DATA_BUDGET_BYTES / 1024} KB)",
+            bytesUsed < DATA_BUDGET_BYTES
+        )
+    }
+
     // region helpers
 
     private fun launchAndWaitForPhotos() {
@@ -164,6 +197,30 @@ class PicSomeE2ETest {
         val bitmap = instrumentation.uiAutomation.takeScreenshot() ?: return
         val name = "%s/%02d_%s.png".format(testName.methodName, ++step, label)
         TestStorage().openOutputFile(name).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    /** Waits until the app has received nothing new for [SETTLE_MS], then returns its total received bytes. */
+    private fun waitForNetworkToSettle(uid: Int): Long {
+        val deadline = System.currentTimeMillis() + NETWORK_TIMEOUT
+        var last = TrafficStats.getUidRxBytes(uid)
+        var stableSince = System.currentTimeMillis()
+        while (System.currentTimeMillis() < deadline) {
+            Thread.sleep(250)
+            val now = TrafficStats.getUidRxBytes(uid)
+            if (now != last) {
+                last = now
+                stableSince = System.currentTimeMillis()
+            } else if (System.currentTimeMillis() - stableSince >= SETTLE_MS) {
+                break
+            }
+        }
+        return last
+    }
+
+    private fun writeMetrics(vararg lines: String) {
+        TestStorage().openOutputFile("${testName.methodName}/metrics.txt").use {
+            it.write(lines.joinToString("\n", postfix = "\n").toByteArray())
+        }
     }
 
     private fun setAirplaneMode(enabled: Boolean) {
@@ -219,5 +276,8 @@ class PicSomeE2ETest {
     private companion object {
         const val TIMEOUT = 30_000L
         const val NETWORK_TIMEOUT = 60_000L
+        const val SETTLE_MS = 3_000L
+        const val MIN_EXPECTED_BYTES = 100L * 1024
+        const val DATA_BUDGET_BYTES = 1L * 1024 * 1024
     }
 }

@@ -24,6 +24,8 @@ class PhotoUiMapperTest {
         val expectedPhoto = PhotoUi(
             id = "102",
             author = "Ben Moore",
+            width = 2000,
+            height = 3000,
             download_url = "https://picsum.photos/id/102/4320/3240",
             isFavourite = true
         )
