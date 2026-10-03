@@ -1,7 +1,10 @@
 package com.theseuntaylor.picsomeapp.e2e
 
+import android.app.Activity
 import android.app.DownloadManager
+import android.app.Instrumentation
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -19,10 +22,16 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.compose.ui.test.swipeUp
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.Intents.intending
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasDataString
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.services.storage.TestStorage
@@ -30,6 +39,8 @@ import com.theseuntaylor.picsomeapp.MainActivity
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Rule
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.startsWith
 import org.junit.Test
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
@@ -172,7 +183,74 @@ class PicSomeE2ETest {
         )
     }
 
+    @Test
+    fun photoDetails_creditsThePhotographer_andLinksToTheOriginal() {
+        launchAndWaitForPhotos()
+        val photoId = firstPhotoId()
+
+        compose.onNodeWithContentDescription("Cover image for $photoId").performClick()
+        compose.waitUntilExactlyOneExists(hasTextContaining("View on unsplash.com"), TIMEOUT)
+        compose.onNodeWithText("Photo by", substring = true).assertIsDisplayed()
+        screenshot("photo_credit")
+
+        Intents.init()
+        try {
+            // Answer the browser intent ourselves so the test stays inside the app.
+            intending(hasAction(Intent.ACTION_VIEW))
+                .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, null))
+            compose.onNode(hasTextContaining("View on unsplash.com")).performClick()
+            intended(allOf(hasAction(Intent.ACTION_VIEW), hasDataString(startsWith("https://unsplash.com/photos/"))))
+        } finally {
+            Intents.release()
+        }
+    }
+
+    @Test
+    fun scrollingHome_keepsLoadingPhotosPastTheFirstHundred() {
+        launchAndWaitForPhotos()
+
+        val seen = scrollHomeUntil { seen -> seen.size > FIRST_PAGE_SIZE }
+        screenshot("scrolled_past_first_page")
+        writeMetrics("distinct_photos_seen=${seen.size}")
+
+        assertTrue("Only ${seen.size} photos were reachable by scrolling", seen.size > FIRST_PAGE_SIZE)
+    }
+
+    @Test
+    fun losingConnectionWhileLoadingMore_offersRetry_whichContinuesOnceOnline() {
+        launchAndWaitForPhotos()
+        setAirplaneMode(true)
+
+        scrollHomeUntil { compose.onAllNodesWithText("Retry").count() > 0 }
+        compose.onNodeWithText("Retry").performScrollTo().assertIsDisplayed()
+        screenshot("load_more_failed_offline")
+
+        setAirplaneMode(false)
+        waitForInternet()
+        compose.onNodeWithText("Retry").performClick()
+
+        val seen = scrollHomeUntil { seen -> seen.size > FIRST_PAGE_SIZE }
+        screenshot("loaded_more_after_retry")
+        assertTrue("Only ${seen.size} photos after retrying", seen.size > FIRST_PAGE_SIZE)
+    }
+
     // region helpers
+
+    /** Drags Home's grid down until [done] (or the timeout); returns every photo id seen on the way. */
+    private fun scrollHomeUntil(done: (seen: Set<String>) -> Boolean): Set<String> {
+        val seen = mutableSetOf<String>()
+        val deadline = System.currentTimeMillis() + PAGING_TIMEOUT
+        while (System.currentTimeMillis() < deadline) {
+            seen += visiblePhotoIds()
+            if (done(seen)) break
+            // A slow drag scrolls without flinging, so no rows are skipped between samples.
+            compose.onNode(hasScrollAction()).performTouchInput {
+                swipeUp(startY = bottom * 0.7f, endY = bottom * 0.3f, durationMillis = 800)
+            }
+            compose.waitForIdle()
+        }
+        return seen
+    }
 
     private fun launchAndWaitForPhotos() {
         scenario = ActivityScenario.launch(MainActivity::class.java)
@@ -191,6 +269,13 @@ class PicSomeE2ETest {
             .config[SemanticsProperties.ContentDescription]
             .first()
             .removePrefix("Cover image for ")
+
+    private fun visiblePhotoIds(): List<String> =
+        compose.onAllNodesWithContentDescription("Cover image for", substring = true)
+            .fetchSemanticsNodes()
+            .flatMap { it.config[SemanticsProperties.ContentDescription] }
+            .filter { it.startsWith("Cover image for ") }
+            .map { it.removePrefix("Cover image for ") }
 
     private fun screenshot(label: String) {
         compose.waitForIdle()
@@ -277,6 +362,8 @@ class PicSomeE2ETest {
         const val TIMEOUT = 30_000L
         const val NETWORK_TIMEOUT = 60_000L
         const val SETTLE_MS = 3_000L
+        const val FIRST_PAGE_SIZE = 100
+        const val PAGING_TIMEOUT = 180_000L
         const val MIN_EXPECTED_BYTES = 100L * 1024
         const val DATA_BUDGET_BYTES = 1L * 1024 * 1024
     }

@@ -12,8 +12,11 @@ interface PhotosDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPhotos(photoEntity: List<PhotoEntity>)
 
-    @Query("SELECT * FROM photos")
+    @Query("SELECT * FROM photos ORDER BY page, position")
     suspend fun getPhotos(): List<PhotoEntity>
+
+    @Query("SELECT MAX(page) FROM photos")
+    suspend fun getLastLoadedPage(): Int?
 
     @Query("SELECT * FROM photos WHERE id = :id")
     suspend fun getPhotoById(id: String): PhotoEntity

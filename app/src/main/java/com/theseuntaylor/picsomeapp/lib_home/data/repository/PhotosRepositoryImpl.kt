@@ -28,7 +28,7 @@ class PhotosRepositoryImpl @Inject constructor(
 //                if (networkDataSource.getPhotos().isSuccessful) {
                 val remotePhotos =
                     networkDataSource.getPhotos().map { it.toDomainModel() }.shuffled()
-                remotePhotos?.map { it.asEntity() }
+                remotePhotos?.mapIndexed { index, photo -> photo.asEntity(page = 1, position = index) }
                     ?.let { localDataSource.refreshPhotos(photoEntity = it) }
                 if (remotePhotos != null) {
                     emit(value = remotePhotos)
@@ -38,6 +38,22 @@ class PhotosRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             e.localizedMessage
+            throw e.transformException()
+        }
+    }
+
+    override suspend fun loadNextPage(): Boolean {
+        try {
+            val nextPage = (localDataSource.getLastLoadedPage() ?: 0) + 1
+            val photos = networkDataSource.getPhotos(page = nextPage)
+                .map { it.toDomainModel() }
+                .shuffled()
+            if (photos.isEmpty()) return false
+            localDataSource.addPhotos(
+                photos.mapIndexed { index, photo -> photo.asEntity(page = nextPage, position = index) }
+            )
+            return true
+        } catch (e: Exception) {
             throw e.transformException()
         }
     }

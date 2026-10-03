@@ -22,7 +22,7 @@ class DataModule {
             context.applicationContext,
             PhotosDatabase::class.java,
             "photos.db"
-        ).build()
+        ).addMigrations(PhotosDatabase.MIGRATION_1_2).build()
     }
 
     @Provides

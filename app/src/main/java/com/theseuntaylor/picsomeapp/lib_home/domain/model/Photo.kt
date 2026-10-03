@@ -12,12 +12,14 @@ data class Photo(
     var isFavourite: Boolean = false
 )
 
-fun Photo.asEntity() = PhotoEntity(
+fun Photo.asEntity(page: Int = 1, position: Int = 0) = PhotoEntity(
     id = id,
     author = author,
     width = width,
     height = height,
     url = url,
     download_url = download_url,
-    isFavourite = false
+    isFavourite = false,
+    page = page,
+    position = position,
 )

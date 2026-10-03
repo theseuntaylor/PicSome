@@ -5,9 +5,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import com.theseuntaylor.picsomeapp.R
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +32,7 @@ import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.home.model.HomeUiState
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 
 @Composable
@@ -70,6 +77,14 @@ fun HomeScreen(
                                 onPhotoClicked = onPhotoClicked
                             )
                         }
+                        if (state.isLoadingMore || state.loadMoreError != null) {
+                            item(key = LOAD_MORE_FOOTER_KEY, span = StaggeredGridItemSpan.FullLine) {
+                                LoadMoreFooter(
+                                    errorMessage = state.loadMoreError,
+                                    onRetry = viewModel::loadMorePhotos
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -80,6 +95,17 @@ fun HomeScreen(
 
             else -> {}
         }
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layout = listState.layoutInfo
+            val lastVisibleIndex = layout.visibleItemsInfo.lastOrNull()?.index ?: return@snapshotFlow false
+            lastVisibleIndex >= layout.totalItemsCount - LOAD_MORE_THRESHOLD
+        }
+            .distinctUntilChanged()
+            .filter { nearEnd -> nearEnd }
+            .collect { viewModel.loadMorePhotos() }
     }
 
     LaunchedEffect(listState) {
@@ -99,5 +125,30 @@ fun HomeScreen(
             .collect { isVisible ->
                 onScrollDirectionChanged(isVisible)
             }
+    }
+}
+
+/** Start fetching the next page when the user is this many items from the end. */
+private const val LOAD_MORE_THRESHOLD = 20
+private const val LOAD_MORE_FOOTER_KEY = "load_more_footer"
+
+@Composable
+private fun LoadMoreFooter(errorMessage: String?, onRetry: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        if (errorMessage == null) {
+            CircularProgressIndicator()
+        } else {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(errorMessage, textAlign = TextAlign.Center)
+                TextButton(onClick = onRetry) {
+                    Text(stringResource(R.string.retry))
+                }
+            }
+        }
     }
 }

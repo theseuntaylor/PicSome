@@ -15,6 +15,11 @@ if (keystorePropertiesFile.exists()) {
     keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
 }
 
+ksp {
+    // Exported Room schemas are committed so future migrations can be checked against them.
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 android {
     namespace 'com.theseuntaylor.picsomeapp'
     compileSdk 36
@@ -133,6 +138,7 @@ dependencies {
     androidTestImplementation libs.androidx.test.runner
     androidTestImplementation libs.androidx.test.services.storage
     androidTestImplementation libs.androidx.compose.ui.test.junit4
+    androidTestImplementation libs.androidx.test.espresso.intents
     androidTestUtil libs.androidx.test.orchestrator
     androidTestUtil libs.androidx.test.services
 }
