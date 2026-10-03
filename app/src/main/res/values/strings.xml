@@ -15,6 +15,8 @@
     <string name="download_failed">Couldn\'t start the download. Please try again.</string>
     <string name="download_needs_storage_permission">Storage permission is needed to save photos.</string>
     <string name="download_title">Photo by %1$s</string>
+    <string name="photo_credit">Photo by %1$s</string>
+    <string name="view_on_source">View on %1$s</string>
     <string name="favourites_title">Your Favourite Photos</string>
     <string name="favourites_empty">No favourites yet.\nTap ♡ on a photo to save it here.</string>
 

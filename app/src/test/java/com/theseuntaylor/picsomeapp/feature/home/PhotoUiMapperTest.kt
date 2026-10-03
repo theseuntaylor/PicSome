@@ -26,6 +26,7 @@ class PhotoUiMapperTest {
             author = "Ben Moore",
             width = 2000,
             height = 3000,
+            sourceUrl = "https://unsplash.com/photos/pJILiyPdrXI",
             download_url = "https://picsum.photos/id/102/4320/3240",
             isFavourite = true
         )

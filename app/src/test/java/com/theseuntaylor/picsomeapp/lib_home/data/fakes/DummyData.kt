@@ -136,6 +136,7 @@ object DummyData {
             author = "Ben Moore",
             width = 4320,
             height = 3240,
+            sourceUrl = "https://unsplash.com/photos/pJILiyPdrXI",
             download_url = "https://picsum.photos/id/102/4320/3240",
             isFavourite = true
         ),
@@ -144,6 +145,7 @@ object DummyData {
             author = "Ben Moore",
             width = 4320,
             height = 3240,
+            sourceUrl = "https://unsplash.com/photos/pJILiyPdrXI",
             download_url = "https://picsum.photos/id/102/4320/3240",
             isFavourite = true
         ),

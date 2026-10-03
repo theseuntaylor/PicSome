@@ -7,6 +7,8 @@ data class PhotoUi(
     val author: String,
     val width: Int,
     val height: Int,
+    /** The photo's page at its original source (usually Unsplash), for crediting the photographer. */
+    val sourceUrl: String,
     val download_url: String,
     var isFavourite: Boolean
 )
@@ -22,6 +24,7 @@ fun Photo.asUiModel() = PhotoUi(
     author = author,
     width = width,
     height = height,
+    sourceUrl = url,
     download_url = download_url,
     isFavourite = isFavourite
 )

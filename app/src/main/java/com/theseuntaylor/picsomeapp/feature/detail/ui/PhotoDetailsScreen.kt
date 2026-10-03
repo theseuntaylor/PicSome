@@ -7,8 +7,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,14 +28,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.feature.detail.model.PhotoDetailsUiState
+import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 import com.theseuntaylor.picsomeapp.feature.home.model.aspectRatio
 import com.theseuntaylor.picsomeapp.core.components.sizedUrl
 import kotlinx.coroutines.launch
@@ -113,7 +118,7 @@ fun PhotoDetailsScreen(
                 }
 
                 is PhotoDetailsUiState.Success -> {
-                    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
                         AsyncImage(
                             model = uiState.photo.sizedUrl(targetWidthPx = constraints.maxWidth),
                             contentDescription = "Photo by ${uiState.photo.author}",
@@ -123,6 +128,7 @@ fun PhotoDetailsScreen(
                                 .aspectRatio(uiState.photo.aspectRatio)
                         )
                     }
+                    PhotoCredit(photo = uiState.photo)
                 }
 
                 is PhotoDetailsUiState.Error -> {
@@ -130,6 +136,28 @@ fun PhotoDetailsScreen(
                 }
 
                 else -> {}
+            }
+        }
+    }
+}
+
+@Composable
+private fun PhotoCredit(photo: PhotoUi) {
+    val uriHandler = LocalUriHandler.current
+    val sourceHost = remember(photo.sourceUrl) {
+        photo.sourceUrl.toUri().host?.removePrefix("www.")
+    }
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Text(
+            text = stringResource(R.string.photo_credit, photo.author),
+            style = MaterialTheme.typography.titleMedium
+        )
+        if (sourceHost != null) {
+            TextButton(
+                onClick = { uriHandler.openUri(photo.sourceUrl) },
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(stringResource(R.string.view_on_source, sourceHost))
             }
         }
     }
