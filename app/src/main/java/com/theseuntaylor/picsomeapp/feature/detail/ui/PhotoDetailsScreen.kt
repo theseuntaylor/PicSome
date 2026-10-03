@@ -36,7 +36,7 @@ import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.feature.detail.model.PhotoDetailsUiState
 import com.theseuntaylor.picsomeapp.feature.home.model.aspectRatio
-import com.theseuntaylor.picsomeapp.feature.home.model.sizedUrl
+import com.theseuntaylor.picsomeapp.core.components.sizedUrl
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

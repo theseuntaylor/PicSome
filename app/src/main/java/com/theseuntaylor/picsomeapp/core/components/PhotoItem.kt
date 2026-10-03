@@ -29,7 +29,6 @@ import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 import com.theseuntaylor.picsomeapp.feature.home.model.aspectRatio
-import com.theseuntaylor.picsomeapp.feature.home.model.sizedUrl
 
 @Composable
 fun PhotoItem(

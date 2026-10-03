@@ -2,7 +2,9 @@ package com.theseuntaylor.picsomeapp.lib_home.di
 
 import com.theseuntaylor.picsomeapp.lib_home.data.repository.PhotosRepository
 import com.theseuntaylor.picsomeapp.lib_home.data.repository.PhotosRepositoryImpl
+import com.theseuntaylor.picsomeapp.lib_home.domain.model.PhotoImageUrls
 import com.theseuntaylor.picsomeapp.lib_home.domain.usecase.FavouritesFunctionalUseCase
+import com.theseuntaylor.picsomeapp.lib_home.remote.PicsumPhotoImageUrls
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,5 +29,8 @@ abstract class HomeModule {
     abstract fun bindPhotosRepository(
         photosRepositoryImpl: PhotosRepositoryImpl,
     ): PhotosRepository
+
+    @Binds
+    abstract fun bindPhotoImageUrls(picsumPhotoImageUrls: PicsumPhotoImageUrls): PhotoImageUrls
 
 }
