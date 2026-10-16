@@ -26,7 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.theseuntaylor.picsomeapp.core.components.ErrorView
 import com.theseuntaylor.picsomeapp.core.components.Loader
+import com.theseuntaylor.picsomeapp.core.components.PhotoGridSpacing
 import com.theseuntaylor.picsomeapp.core.components.PhotoItem
+import com.theseuntaylor.picsomeapp.core.components.photoGridArrangement
+import com.theseuntaylor.picsomeapp.core.components.photoGridContentPadding
 import com.theseuntaylor.picsomeapp.feature.home.model.HomeUiState
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -64,7 +67,10 @@ fun HomeScreen(
                     )
                     LazyVerticalStaggeredGrid(
                         state = listState,
-                        columns = StaggeredGridCells.Fixed(2)
+                        columns = StaggeredGridCells.Fixed(2),
+                        contentPadding = photoGridContentPadding,
+                        horizontalArrangement = photoGridArrangement,
+                        verticalItemSpacing = PhotoGridSpacing,
                     ) {
                         items(items = state.data, key = { photo: PhotoUi -> photo.id }) { photo ->
                             PhotoItem(

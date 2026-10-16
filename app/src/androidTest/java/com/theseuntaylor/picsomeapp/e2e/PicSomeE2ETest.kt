@@ -22,7 +22,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.compose.ui.test.swipeUp
@@ -70,8 +70,61 @@ class PicSomeE2ETest {
     @After
     fun tearDown() {
         setAirplaneMode(false)
+        shell("cmd uimode night no")
+        shell("settings put system font_scale 1.0")
         scenario?.close()
     }
+
+    // region visual tour: the main screens captured as a reviewable before/after set
+
+    @Test
+    fun visualTour_light() = visualTour()
+
+    @Test
+    fun visualTour_dark() {
+        shell("cmd uimode night yes")
+        visualTour()
+    }
+
+    @Test
+    fun visualTour_largestFontScale() {
+        shell("settings put system font_scale 2.0")
+        visualTour()
+    }
+
+    private fun visualTour() {
+        val uid = context.applicationInfo.uid
+        launchAndWaitForPhotos()
+        waitForNetworkToSettle(uid)
+        screenshot("home")
+
+        compose.onNodeWithText("Favourites").performClick()
+        compose.waitUntilAtLeastOneExists(hasTextContaining("No favourites yet"), TIMEOUT)
+        screenshot("favourites_empty")
+
+        compose.onNodeWithText("Home").performClick()
+        waitForPhotos()
+        compose.onAllNodesWithContentDescription("Add to favourites").onFirst().performClick()
+        compose.onNodeWithText("Favourites").performClick()
+        compose.waitUntil(TIMEOUT) {
+            compose.onAllNodesWithContentDescription("Remove from favourites").count() == 1
+        }
+        waitForNetworkToSettle(uid)
+        screenshot("favourites_one_photo")
+
+        compose.onNodeWithContentDescription("Cover image for", substring = true).performClick()
+        compose.waitUntilExactlyOneExists(hasContentDescriptionText("Download"), TIMEOUT)
+        waitForNetworkToSettle(uid)
+        screenshot("photo_details")
+
+        // Cards show the photographer's name on its own, not "by: <name>".
+        compose.onNodeWithContentDescription("Back").performClick()
+        compose.onNodeWithText("Home").performClick()
+        waitForPhotos()
+        compose.onAllNodesWithText("by:", substring = true).assertCountEquals(0)
+    }
+
+    // endregion
 
     @Test
     fun favouritesTab_whenNothingIsFavourited_explainsHowToAddOne() {
@@ -221,15 +274,18 @@ class PicSomeE2ETest {
         launchAndWaitForPhotos()
         setAirplaneMode(true)
 
-        scrollHomeUntil { compose.onAllNodesWithText("Retry").count() > 0 }
-        compose.onNodeWithText("Retry").performScrollTo().assertIsDisplayed()
+        val seenBeforeRetry = scrollHomeUntil { compose.onAllNodesWithText("Retry").count() > 0 }
+        // The footer can be composed just below the viewport; scroll the lazy grid to it.
+        compose.onNode(hasScrollAction()).performScrollToNode(hasTextExactly("Retry"))
+        compose.onNodeWithText("Retry").assertIsDisplayed()
         screenshot("load_more_failed_offline")
 
         setAirplaneMode(false)
         waitForInternet()
         compose.onNodeWithText("Retry").performClick()
 
-        val seen = scrollHomeUntil { seen -> seen.size > FIRST_PAGE_SIZE }
+        // Count from what was already seen: only photos beyond the first page can push it past 100.
+        val seen = scrollHomeUntil(alreadySeen = seenBeforeRetry) { seen -> seen.size > FIRST_PAGE_SIZE }
         screenshot("loaded_more_after_retry")
         assertTrue("Only ${seen.size} photos after retrying", seen.size > FIRST_PAGE_SIZE)
     }
@@ -237,8 +293,11 @@ class PicSomeE2ETest {
     // region helpers
 
     /** Drags Home's grid down until [done] (or the timeout); returns every photo id seen on the way. */
-    private fun scrollHomeUntil(done: (seen: Set<String>) -> Boolean): Set<String> {
-        val seen = mutableSetOf<String>()
+    private fun scrollHomeUntil(
+        alreadySeen: Set<String> = emptySet(),
+        done: (seen: Set<String>) -> Boolean,
+    ): Set<String> {
+        val seen = alreadySeen.toMutableSet()
         val deadline = System.currentTimeMillis() + PAGING_TIMEOUT
         while (System.currentTimeMillis() < deadline) {
             seen += visiblePhotoIds()
@@ -310,7 +369,13 @@ class PicSomeE2ETest {
 
     private fun setAirplaneMode(enabled: Boolean) {
         val state = if (enabled) "enable" else "disable"
-        instrumentation.uiAutomation.executeShellCommand("cmd connectivity airplane-mode $state").close()
+        shell("cmd connectivity airplane-mode $state")
+    }
+
+    /** Runs [command] as the shell user and waits for it to finish. */
+    private fun shell(command: String) {
+        val output = instrumentation.uiAutomation.executeShellCommand(command)
+        android.os.ParcelFileDescriptor.AutoCloseInputStream(output).use { it.readBytes() }
     }
 
     private fun waitForInternet() {
