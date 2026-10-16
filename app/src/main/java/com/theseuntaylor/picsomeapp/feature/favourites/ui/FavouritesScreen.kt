@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,15 +17,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.theseuntaylor.picsomeapp.R
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.core.components.PhotoItem
-import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.favourites.FavouritesUiState
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 
@@ -59,12 +57,9 @@ fun ShowFavourites(
                         stringResource(R.string.favourites_title),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(5.dp),
-                        style = Typography.bodyLarge.copy(
-                            fontWeight = FontWeight.W700,
-                            fontSize = 24.sp,
-                            color = colorScheme.primary
-                        ),
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = colorScheme.primary,
                         textAlign = TextAlign.Center
                     )
                     if (favouritePhotos.isEmpty()) {
@@ -72,12 +67,9 @@ fun ShowFavourites(
                             stringResource(R.string.favourites_empty),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(5.dp),
-                            style = Typography.bodyLarge.copy(
-                                fontWeight = FontWeight.W400,
-                                fontSize = 18.sp,
-                                color = colorScheme.primary
-                            ),
+                                .padding(24.dp),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
                     } else {
@@ -108,11 +100,8 @@ fun ShowFavourites(
                     Text(
                         state.errorMessage,
                         modifier = Modifier
-                            .padding(5.dp),
-                        style = Typography.bodyLarge.copy(
-                            fontWeight = FontWeight.W400,
-                            fontSize = 18.sp
-                        ),
+                            .padding(24.dp),
+                        style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center
                     )
                 }

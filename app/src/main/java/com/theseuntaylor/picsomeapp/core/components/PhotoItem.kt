@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +27,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.theseuntaylor.picsomeapp.R
-import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 import com.theseuntaylor.picsomeapp.feature.home.model.aspectRatio
 
@@ -79,7 +79,7 @@ fun PhotoItem(
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
 
-                style = Typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }

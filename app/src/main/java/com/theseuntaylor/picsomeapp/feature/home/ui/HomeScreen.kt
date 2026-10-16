@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.stringResource
@@ -20,15 +21,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.theseuntaylor.picsomeapp.core.components.ErrorView
 import com.theseuntaylor.picsomeapp.core.components.Loader
 import com.theseuntaylor.picsomeapp.core.components.PhotoItem
-import com.theseuntaylor.picsomeapp.core.theme.Typography
 import com.theseuntaylor.picsomeapp.feature.home.model.HomeUiState
 import com.theseuntaylor.picsomeapp.feature.home.model.PhotoUi
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -59,11 +57,9 @@ fun HomeScreen(
                         "Your Photo Library",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(5.dp),
-                        style = Typography.bodyLarge.copy(
-                            fontWeight = FontWeight.W700, fontSize = 24.sp,
-                            color = colorScheme.primary
-                        ),
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = colorScheme.primary,
                         textAlign = TextAlign.Center
                     )
                     LazyVerticalStaggeredGrid(

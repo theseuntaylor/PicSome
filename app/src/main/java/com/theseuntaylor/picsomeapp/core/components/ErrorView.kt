@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.theseuntaylor.picsomeapp.R
-import com.theseuntaylor.picsomeapp.core.theme.Typography
 
 @Composable
 fun ErrorView(
@@ -33,7 +33,7 @@ fun ErrorView(
     ) {
         Text(
             message,
-            style = Typography.bodyLarge,
+            style = MaterialTheme.typography.bodyLarge,
             color = colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
