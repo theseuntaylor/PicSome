@@ -1,0 +1,92 @@
+name: Deploy to Play Store
+
+# Push a version tag on master's latest commit to release it, e.g.
+#   git tag v1.1.0 && git push origin v1.1.0
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    name: Build & Deploy to Play Store
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      # The versionCode bump is committed back to master, so only release a tag that is
+      # master's latest commit; otherwise the build would include untagged changes.
+      - name: Check the tag is on master's latest commit
+        run: |
+          TAG_COMMIT=$(git rev-list -n 1 "$GITHUB_REF_NAME")
+          MASTER_COMMIT=$(git rev-parse HEAD)
+          if [ "$TAG_COMMIT" != "$MASTER_COMMIT" ]; then
+            echo "::error::$GITHUB_REF_NAME points at $TAG_COMMIT, but master is at $MASTER_COMMIT. Tag master's latest commit."
+            exit 1
+          fi
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > "$HOME/picsome.jks"
+
+      - name: Create keystore.properties
+        run: |
+          cat > keystore.properties <<PROPS
+          storeFile=$HOME/picsome.jks
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          PROPS
+
+      - name: Auto-increment versionCode and set versionName from tag
+        run: |
+          CURRENT_VERSION_CODE=$(sed -nE 's/^ *versionCode ([0-9]+).*/\1/p' app/build.gradle)
+          NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 1))
+          VERSION_NAME=${GITHUB_REF_NAME#v}
+
+          echo "Bumping versionCode: $CURRENT_VERSION_CODE → $NEW_VERSION_CODE"
+          echo "Setting versionName: $VERSION_NAME (from tag $GITHUB_REF_NAME)"
+
+          sed -i -E "s/^( *)versionCode [0-9]+/\1versionCode $NEW_VERSION_CODE/" app/build.gradle
+          sed -i -E "s/^( *)versionName .*/\1versionName \"$VERSION_NAME\"/" app/build.gradle
+
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> "$GITHUB_ENV"
+
+      - name: Build signed release AAB
+        run: ./gradlew bundleRelease
+
+      - name: Upload to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: com.theseuntaylor.picsomeapp
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
+          track: production
+          status: completed
+
+      - name: Commit version bump back to master
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/build.gradle
+          if git diff --staged --quiet; then
+            echo "No changes to commit — version already bumped."
+          else
+            git commit -m "chore: bump versionCode to ${{ env.NEW_VERSION_CODE }} after ${{ github.ref_name }} release"
+            git push origin master
+          fi
