@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -67,6 +68,9 @@ class MainActivity : ComponentActivity() {
                                 Modifier
                                     .fillMaxSize()
                                     .padding(padding)
+                                    // Screens with their own top bar (details) would otherwise
+                                    // add the status-bar inset a second time.
+                                    .consumeWindowInsets(padding)
                             ) {
                                 Column(Modifier.fillMaxSize()) {
                                     PicsomeNavHost(

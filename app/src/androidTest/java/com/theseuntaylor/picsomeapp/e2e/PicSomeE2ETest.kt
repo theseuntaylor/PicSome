@@ -22,10 +22,13 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.compose.ui.test.swipeUp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
@@ -116,12 +119,35 @@ class PicSomeE2ETest {
         compose.waitUntilExactlyOneExists(hasContentDescriptionText("Download"), TIMEOUT)
         waitForNetworkToSettle(uid)
         screenshot("photo_details")
+        assertTopBarSitsDirectlyBelowStatusBar()
+
+        // The credit stays reachable however tall the photo or large the text.
+        compose.onNodeWithText("Photo by", substring = true).performScrollTo().assertIsDisplayed()
+        screenshot("photo_details_credit")
 
         // Cards show the photographer's name on its own, not "by: <name>".
         compose.onNodeWithContentDescription("Back").performClick()
         compose.onNodeWithText("Home").performClick()
         waitForPhotos()
         compose.onAllNodesWithText("by:", substring = true).assertCountEquals(0)
+    }
+
+    /**
+     * The details top bar should start right under the status bar. An icon button is centred in
+     * the 64dp bar, so it sits 8dp below; the status-bar inset applied twice pushes it a whole
+     * status bar further down.
+     */
+    private fun assertTopBarSitsDirectlyBelowStatusBar() {
+        var statusBarPx = 0
+        scenario!!.onActivity { activity ->
+            statusBarPx = ViewCompat.getRootWindowInsets(activity.window.decorView)!!
+                .getInsets(WindowInsetsCompat.Type.statusBars()).top
+        }
+        val density = context.resources.displayMetrics.density
+        val backTopPx = compose.onNodeWithContentDescription("Back").fetchSemanticsNode().boundsInWindow.top
+        val gapDp = (backTopPx - statusBarPx) / density
+        writeMetrics("details_back_button_gap_below_status_bar_dp=$gapDp")
+        assertTrue("Back button is ${gapDp}dp below the status bar; expected about 8dp", gapDp in 0f..16f)
     }
 
     // endregion

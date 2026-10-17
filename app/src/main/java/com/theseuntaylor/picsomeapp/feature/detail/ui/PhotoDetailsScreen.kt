@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -118,21 +120,29 @@ fun PhotoDetailsScreen(
                 }
 
                 is PhotoDetailsUiState.Success -> {
-                    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                        AsyncImage(
-                            model = uiState.photo.sizedUrl(targetWidthPx = constraints.maxWidth),
-                            contentDescription = "Photo by ${uiState.photo.author}",
-                            placeholder = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(uiState.photo.aspectRatio)
-                        )
+                    // Scrolls so the credit stays reachable below tall portrait photos and
+                    // large text.
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                            AsyncImage(
+                                model = uiState.photo.sizedUrl(targetWidthPx = constraints.maxWidth),
+                                contentDescription = "Photo by ${uiState.photo.author}",
+                                placeholder = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(uiState.photo.aspectRatio)
+                            )
+                        }
+                        PhotoCredit(photo = uiState.photo)
                     }
-                    PhotoCredit(photo = uiState.photo)
                 }
 
                 is PhotoDetailsUiState.Error -> {
-                    Text(text = uiState.errorMessage)
+                    Text(
+                        text = uiState.errorMessage,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
                 }
 
                 else -> {}
