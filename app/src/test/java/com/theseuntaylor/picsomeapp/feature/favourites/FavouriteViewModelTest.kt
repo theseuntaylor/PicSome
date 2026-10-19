@@ -2,6 +2,7 @@ package com.theseuntaylor.picsomeapp.feature.favourites
 
 import com.theseuntaylor.picsomeapp.feature.favourites.ui.FavouriteViewModel
 import com.theseuntaylor.picsomeapp.lib_home.data.fakes.DummyData
+import com.theseuntaylor.picsomeapp.lib_home.data.fakes.FakePhotosRepository
 import com.theseuntaylor.picsomeapp.lib_home.data.repository.PhotosRepository
 import com.theseuntaylor.picsomeapp.lib_home.domain.usecase.FavouriteUseCase
 import com.theseuntaylor.picsomeapp.lib_home.domain.usecase.FavouritesFunctionalUseCase
@@ -209,6 +210,29 @@ class FavouriteViewModelTest {
             val actualUiState = favouriteViewModel.uiState.value
             // then
             Assert.assertEquals(expectedUiState, actualUiState)
+        } finally {
+            Dispatchers.resetMain()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when unliking a photo fails to save, then the favourites stay as they were instead of crashing`() = runTest {
+        // given
+        val photosRepository = FakePhotosRepository(photos = DummyData.favouritePhotos)
+        val favouriteViewModel = createFavouriteViewModel(
+            photosRepository = photosRepository,
+            favouriteUseCase = FavouriteUseCase(photosRepository = photosRepository)
+        )
+        try {
+            Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+            favouriteViewModel.getFavouritePhotos()
+            val before = favouriteViewModel.uiState.value
+            photosRepository.toggleError = IllegalStateException("database is locked")
+            // when
+            favouriteViewModel.toggleFavourite(id = "102", isFavourite = false)
+            // then
+            Assert.assertEquals(before, favouriteViewModel.uiState.value)
         } finally {
             Dispatchers.resetMain()
         }
