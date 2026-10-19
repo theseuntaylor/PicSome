@@ -77,7 +77,14 @@ class HomeViewModel @Inject constructor(
 
     fun toggleFavourite(id: String, isFavourite: Boolean) {
         viewModelScope.launch {
-            repository.toggleFavourite(id, isFavourite)
+            try {
+                repository.toggleFavourite(id, isFavourite)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Nothing was saved, so leave the photos as they are rather than crash.
+                return@launch
+            }
             repository.getPhotos()
                 .map { photos ->
                     photos.map { it.asUiModel() }

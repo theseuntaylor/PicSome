@@ -9,6 +9,7 @@ import com.theseuntaylor.picsomeapp.feature.home.model.asUiModel
 import com.theseuntaylor.picsomeapp.lib_home.data.repository.PhotosRepository
 import com.theseuntaylor.picsomeapp.lib_home.domain.usecase.FavouriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,7 +38,14 @@ class FavouriteViewModel @Inject constructor(
 
     fun toggleFavourite(id: String, isFavourite: Boolean) {
         viewModelScope.launch {
-            repository.toggleFavourite(id, isFavourite)
+            try {
+                repository.toggleFavourite(id, isFavourite)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Nothing was saved, so leave the favourites as they are rather than crash.
+                return@launch
+            }
             repository.getFavouritePhotos()
                 .map { photos ->
                     photos.map { it.asUiModel() }
