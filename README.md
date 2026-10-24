@@ -35,3 +35,7 @@ The workflow needs these repository secrets:
 | `KEY_ALIAS` | Key alias |
 | `KEY_PASSWORD` | Key password |
 | `SERVICE_ACCOUNT_JSON` | JSON key for a Google Cloud service account with release access in Play Console |
+
+## Privacy
+
+See the [privacy policy](PRIVACY_POLICY.md).
