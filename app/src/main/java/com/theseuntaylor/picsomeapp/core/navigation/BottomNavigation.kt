@@ -16,9 +16,9 @@ import com.theseuntaylor.picsomeapp.R
 
 enum class Destinations(
     val destinationRouteName: String,
-    @StringRes val destinationName: Int,
-    @DrawableRes val icon: Int,
-    @StringRes val contentDescription: Int
+    @param:StringRes val destinationName: Int,
+    @param:DrawableRes val icon: Int,
+    @param:StringRes val contentDescription: Int
 ) {
     HOME(
         homeRoute,

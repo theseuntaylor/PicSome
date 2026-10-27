@@ -24,7 +24,7 @@ class PhotoDetailsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val repository: PhotosRepository,
     private val downloader: Downloader,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _uiState = mutableStateOf<PhotoDetailsUiState>(PhotoDetailsUiState.Initial)
